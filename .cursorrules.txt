@@ -1,0 +1,18 @@
+# Project Context
+You are building "The Spice Rack," a MERN stack e-commerce application.
+
+# Tech Stack
+- Frontend: React, Redux Toolkit, React Router, Tailwind CSS (for styling ease).
+- Backend: Node.js, Express.js.
+- Database: MongoDB with Mongoose.
+- Auth: JWT (JSON Web Tokens).
+
+# Folder Structure Rules
+- Follow the structure defined in @spec.md exactly.
+- Backend files go in /backend.
+- Frontend files go in /frontend.
+
+# Coding Style
+- Use functional React components with Hooks.
+- Use async/await for all backend database operations.
+- Always include error handling (try/catch) in backend controllers.
