@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
+import { API_BASE_URL } from '../config/api';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const AdminDashboard = () => {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/orders', {
+      const response = await fetch(`${API_BASE_URL}/api/orders`, {
         headers: {
           Authorization: `Bearer ${userInfo.token}`,
         },
@@ -47,7 +48,7 @@ const AdminDashboard = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/users', {
+      const response = await fetch(`${API_BASE_URL}/api/users`, {
         headers: {
           Authorization: `Bearer ${userInfo.token}`,
         },
@@ -65,7 +66,7 @@ const AdminDashboard = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/products');
+      const response = await fetch(`${API_BASE_URL}/api/products`);
       if (response.ok) {
         const data = await response.json();
         setProducts(data);
@@ -177,7 +178,7 @@ const AdminDashboard = () => {
                                 onClick={async () => {
                                   if (window.confirm('Mark this order as delivered?')) {
                                     try {
-                                      const response = await fetch(`/api/orders/${order._id}/deliver`, {
+                                      const response = await fetch(`${API_BASE_URL}/api/orders/${order._id}/deliver`, {
                                         method: 'PUT',
                                         headers: {
                                           Authorization: `Bearer ${userInfo.token}`,
@@ -246,7 +247,7 @@ const AdminDashboard = () => {
                               onClick={async () => {
                                 if (window.confirm('Are you sure you want to delete this user?')) {
                                   try {
-                                    const response = await fetch(`/api/users/${user._id}`, {
+                                    const response = await fetch(`${API_BASE_URL}/api/users/${user._id}`, {
                                       method: 'DELETE',
                                       headers: {
                                         Authorization: `Bearer ${userInfo.token}`,
@@ -340,7 +341,7 @@ const AdminDashboard = () => {
                           onClick={async () => {
                             if (window.confirm('Are you sure you want to delete this product?')) {
                               try {
-                                const response = await fetch(`/api/products/${product._id}`, {
+                                const response = await fetch(`${API_BASE_URL}/api/products/${product._id}`, {
                                   method: 'DELETE',
                                   headers: {
                                     Authorization: `Bearer ${userInfo.token}`,

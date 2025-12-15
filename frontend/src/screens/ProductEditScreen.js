@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { API_BASE_URL } from '../config/api';
 
 const ProductEditScreen = () => {
   const { id } = useParams();
@@ -26,7 +27,7 @@ const ProductEditScreen = () => {
 
   const fetchProduct = async () => {
     try {
-      const response = await fetch(`/api/products/${id}`);
+      const response = await fetch(`${API_BASE_URL}/api/products/${id}`);
       if (response.ok) {
         const product = await response.json();
         setName(product.name);
@@ -46,7 +47,7 @@ const ProductEditScreen = () => {
     setLoading(true);
 
     try {
-      const url = id === 'new' ? '/api/products' : `/api/products/${id}`;
+      const url = id === 'new' ? `${API_BASE_URL}/api/products` : `${API_BASE_URL}/api/products/${id}`;
       const method = id === 'new' ? 'POST' : 'PUT';
 
       const response = await fetch(url, {

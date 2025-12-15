@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { API_BASE_URL } from '../config/api';
 
 const HomeScreen = () => {
   const [products, setProducts] = useState([]);
@@ -20,8 +21,8 @@ const HomeScreen = () => {
     setLoading(true);
     try {
       const url = searchKeyword
-        ? `/api/products?keyword=${encodeURIComponent(searchKeyword)}`
-        : '/api/products';
+        ? `${API_BASE_URL}/api/products?keyword=${encodeURIComponent(searchKeyword)}`
+        : `${API_BASE_URL}/api/products`;
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Failed to fetch products');

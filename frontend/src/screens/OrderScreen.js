@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { API_BASE_URL } from '../config/api';
 
 const OrderScreen = () => {
   const { id } = useParams();
@@ -12,7 +13,7 @@ const OrderScreen = () => {
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const response = await fetch(`/api/orders/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/orders/${id}`, {
           headers: {
             Authorization: `Bearer ${userInfo.token}`,
           },

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../store/slices/cartSlice';
+import { API_BASE_URL } from '../config/api';
 
 const ProductScreen = () => {
   const { id } = useParams();
@@ -16,7 +17,7 @@ const ProductScreen = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`/api/products/${id}`);
+        const response = await fetch(`${API_BASE_URL}/api/products/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch product');
         }
@@ -246,7 +247,7 @@ const ProductScreen = () => {
                           if (window.confirm('Are you sure you want to delete this review?')) {
                             try {
                               const response = await fetch(
-                                `/api/products/${product._id}/reviews/${review._id}`,
+                                `${API_BASE_URL}/api/products/${product._id}/reviews/${review._id}`,
                                 {
                                   method: 'DELETE',
                                   headers: {
@@ -320,7 +321,7 @@ const ReviewForm = ({ productId, userInfo }) => {
     }
 
     try {
-      const response = await fetch(`/api/products/${productId}/reviews`, {
+      const response = await fetch(`${API_BASE_URL}/api/products/${productId}/reviews`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

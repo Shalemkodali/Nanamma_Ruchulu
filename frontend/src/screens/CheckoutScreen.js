@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearCart } from '../store/slices/cartSlice';
+import { API_BASE_URL } from '../config/api';
 
 const CheckoutScreen = () => {
   const navigate = useNavigate();
@@ -64,7 +65,7 @@ const CheckoutScreen = () => {
 
       console.log('Placing order with data:', { ...orderData, orderItems: orderItems.length });
 
-      const response = await fetch('/api/orders', {
+      const response = await fetch(`${API_BASE_URL}/api/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

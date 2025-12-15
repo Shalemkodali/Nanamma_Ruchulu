@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { updateProfile, clearError } from '../store/slices/userSlice';
+import { API_BASE_URL } from '../config/api';
 
 const ProfileScreen = () => {
   const dispatch = useDispatch();
@@ -16,7 +17,7 @@ const ProfileScreen = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch('/api/orders/myorders', {
+      const response = await fetch(`${API_BASE_URL}/api/orders/myorders`, {
         headers: {
           Authorization: `Bearer ${userInfo.token}`,
         },

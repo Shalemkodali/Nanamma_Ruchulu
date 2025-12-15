@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { API_BASE_URL } from '../../config/api';
 
 // Async thunk for fetching products
 export const fetchProducts = createAsyncThunk(
   'productList/fetchProducts',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch('/api/products');
+      const response = await fetch(`${API_BASE_URL}/api/products`);
       if (!response.ok) {
         throw new Error('Failed to fetch products');
       }
