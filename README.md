@@ -4,8 +4,8 @@ A full-stack e-commerce platform built with the MERN stack (MongoDB, Express, Re
 
 ## 🚀 Live Demo
 
-- **Frontend (Vercel):** [https://the-spice-rack.vercel.app](https://nanamma-ruchulu.vercel.app/)
-- **Backend (Render):** [https://spice-rack-api.onrender.com](https://nanamma-ruchulu-api.onrender.com)
+- **Frontend (Vercel):** (https://nanamma-ruchulu.vercel.app/)
+- **Backend (Render):** \(https://nanamma-ruchulu-api.onrender.com)
 
 ## ✨ Features
 
