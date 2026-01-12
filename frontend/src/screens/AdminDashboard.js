@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config/api';
+import './AdminDashboard.css';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -80,46 +81,25 @@ const AdminDashboard = () => {
   if (!userInfo || !userInfo.isAdmin) return null;
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1400px', margin: '0 auto' }}>
-      <h1 style={{ marginBottom: '30px' }}>Admin Dashboard</h1>
+    <div className="admin-container">
+      <h1 className="admin-title">Admin Dashboard</h1>
 
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '30px', borderBottom: '2px solid #ddd' }}>
+      <div className="admin-tabs">
         <button
           onClick={() => setActiveTab('orders')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: activeTab === 'orders' ? '#2c5530' : 'transparent',
-            color: activeTab === 'orders' ? 'white' : '#2c5530',
-            border: 'none',
-            cursor: 'pointer',
-            fontWeight: 'bold',
-          }}
+          className={`admin-tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
         >
           Orders
         </button>
         <button
           onClick={() => setActiveTab('users')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: activeTab === 'users' ? '#2c5530' : 'transparent',
-            color: activeTab === 'users' ? 'white' : '#2c5530',
-            border: 'none',
-            cursor: 'pointer',
-            fontWeight: 'bold',
-          }}
+          className={`admin-tab-btn ${activeTab === 'users' ? 'active' : ''}`}
         >
           Users
         </button>
         <button
           onClick={() => setActiveTab('products')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: activeTab === 'products' ? '#2c5530' : 'transparent',
-            color: activeTab === 'products' ? 'white' : '#2c5530',
-            border: 'none',
-            cursor: 'pointer',
-            fontWeight: 'bold',
-          }}
+          className={`admin-tab-btn ${activeTab === 'products' ? 'active' : ''}`}
         >
           Products
         </button>
@@ -135,44 +115,52 @@ const AdminDashboard = () => {
               {orders.length === 0 ? (
                 <p>No orders</p>
               ) : (
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <div className="admin-table-container">
+                  <table className="admin-table">
                     <thead>
-                      <tr style={{ backgroundColor: '#f5f5f5' }}>
-                        <th style={{ padding: '10px', textAlign: 'left', border: '1px solid #ddd' }}>ID</th>
-                        <th style={{ padding: '10px', textAlign: 'left', border: '1px solid #ddd' }}>User</th>
-                        <th style={{ padding: '10px', textAlign: 'left', border: '1px solid #ddd' }}>Total</th>
-                        <th style={{ padding: '10px', textAlign: 'left', border: '1px solid #ddd' }}>Paid</th>
-                        <th style={{ padding: '10px', textAlign: 'left', border: '1px solid #ddd' }}>Delivered</th>
-                        <th style={{ padding: '10px', textAlign: 'left', border: '1px solid #ddd' }}>Date</th>
-                        <th style={{ padding: '10px', textAlign: 'left', border: '1px solid #ddd' }}>Actions</th>
+                      <tr className="admin-table-header">
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Total</th>
+                        <th>Paid</th>
+                        <th>Delivered</th>
+                        <th>Date</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {orders.map((order) => (
                         <tr key={order._id}>
-                          <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                          <td className="admin-table-cell">
                             <Link
                               to={`/order/${order._id}`}
-                              style={{ textDecoration: 'none', color: '#2c5530', fontWeight: 'bold' }}
+                              className="admin-table-link"
                             >
                               {order._id.slice(-6)}
                             </Link>
                           </td>
-                          <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                          <td className="admin-table-cell">
                             {order.user?.name || 'N/A'}
                           </td>
-                          <td style={{ padding: '10px', border: '1px solid #ddd' }}>${order.totalPrice}</td>
-                          <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                          <td className="admin-table-cell">${order.totalPrice}</td>
+                          <td className="admin-table-cell">
                             {order.isPaid ? 'Yes' : 'No'}
                           </td>
-                          <td style={{ padding: '10px', border: '1px solid #ddd' }}>
-                            {order.isDelivered ? 'Yes' : 'No'}
+                          <td className="admin-table-cell">
+                            {order.isDelivered ? (
+                              <span className="admin-delivery-status admin-delivery-status-delivered">
+                                Delivered
+                              </span>
+                            ) : (
+                              <span className="admin-delivery-status admin-delivery-status-not-delivered">
+                                Not Delivered
+                              </span>
+                            )}
                           </td>
-                          <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                          <td className="admin-table-cell">
                             {new Date(order.createdAt).toLocaleDateString()}
                           </td>
-                          <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                          <td className="admin-table-cell">
                             {!order.isDelivered && (
                               <button
                                 onClick={async () => {
@@ -185,23 +173,25 @@ const AdminDashboard = () => {
                                         },
                                       });
                                       if (response.ok) {
+                                        // Update the order in the local state immediately for better UX
+                                        setOrders(orders.map(o => 
+                                          o._id === order._id 
+                                            ? { ...o, isDelivered: true, deliveredAt: new Date() }
+                                            : o
+                                        ));
+                                        // Also refresh from server to ensure consistency
                                         fetchOrders();
                                       } else {
-                                        alert('Error updating order');
+                                        const errorData = await response.json().catch(() => ({}));
+                                        alert(errorData.message || 'Error updating order');
                                       }
                                     } catch (error) {
-                                      alert('Error updating order');
+                                      console.error('Error updating order:', error);
+                                      alert('Error updating order: ' + error.message);
                                     }
                                   }
                                 }}
-                                style={{
-                                  padding: '5px 10px',
-                                  backgroundColor: '#28a745',
-                                  color: 'white',
-                                  border: 'none',
-                                  borderRadius: '4px',
-                                  cursor: 'pointer',
-                                }}
+                                className="admin-action-btn admin-action-btn-success"
                               >
                                 Mark Delivered
                               </button>
@@ -222,27 +212,27 @@ const AdminDashboard = () => {
               {users.length === 0 ? (
                 <p>No users</p>
               ) : (
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <div className="admin-table-container">
+                  <table className="admin-table">
                     <thead>
-                      <tr style={{ backgroundColor: '#f5f5f5' }}>
-                        <th style={{ padding: '10px', textAlign: 'left', border: '1px solid #ddd' }}>ID</th>
-                        <th style={{ padding: '10px', textAlign: 'left', border: '1px solid #ddd' }}>Name</th>
-                        <th style={{ padding: '10px', textAlign: 'left', border: '1px solid #ddd' }}>Email</th>
-                        <th style={{ padding: '10px', textAlign: 'left', border: '1px solid #ddd' }}>Admin</th>
-                        <th style={{ padding: '10px', textAlign: 'left', border: '1px solid #ddd' }}>Actions</th>
+                      <tr className="admin-table-header">
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Admin</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {users.map((user) => (
                         <tr key={user._id}>
-                          <td style={{ padding: '10px', border: '1px solid #ddd' }}>{user._id.slice(-6)}</td>
-                          <td style={{ padding: '10px', border: '1px solid #ddd' }}>{user.name}</td>
-                          <td style={{ padding: '10px', border: '1px solid #ddd' }}>{user.email}</td>
-                          <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                          <td className="admin-table-cell">{user._id.slice(-6)}</td>
+                          <td className="admin-table-cell">{user.name}</td>
+                          <td className="admin-table-cell">{user.email}</td>
+                          <td className="admin-table-cell">
                             {user.isAdmin ? 'Yes' : 'No'}
                           </td>
-                          <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                          <td className="admin-table-cell">
                             <button
                               onClick={async () => {
                                 if (window.confirm('Are you sure you want to delete this user?')) {
@@ -263,14 +253,7 @@ const AdminDashboard = () => {
                                   }
                                 }
                               }}
-                              style={{
-                                padding: '5px 10px',
-                                backgroundColor: '#dc3545',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                              }}
+                              className="admin-action-btn admin-action-btn-danger"
                             >
                               Delete
                             </button>
@@ -289,51 +272,27 @@ const AdminDashboard = () => {
               <h2>All Products</h2>
               <button
                 onClick={() => navigate('/admin/product/new')}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#2c5530',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  marginBottom: '20px',
-                }}
+                className="admin-add-product-btn"
               >
                 Add New Product
               </button>
               {products.length === 0 ? (
                 <p>No products</p>
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>
+                <div className="admin-products-grid">
                   {products.map((product) => (
-                    <div
-                      key={product._id}
-                      style={{
-                        border: '1px solid #ddd',
-                        borderRadius: '8px',
-                        padding: '15px',
-                      }}
-                    >
+                    <div key={product._id} className="admin-product-card">
                       <img
                         src={product.image}
                         alt={product.name}
-                        style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '4px' }}
+                        className="admin-product-image"
                       />
-                      <h3 style={{ marginTop: '10px' }}>{product.name}</h3>
+                      <h3 className="admin-product-name">{product.name}</h3>
                       <p>${product.price}</p>
-                      <div style={{ display: 'flex', gap: '5px', marginTop: '10px' }}>
+                      <div className="admin-product-actions">
                         <button
                           onClick={() => navigate(`/admin/product/${product._id}/edit`)}
-                          style={{
-                            flex: 1,
-                            padding: '8px',
-                            backgroundColor: '#2c5530',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            fontWeight: 'bold',
-                          }}
+                          className="admin-product-action-btn admin-product-action-btn-edit"
                         >
                           Edit
                         </button>
@@ -357,16 +316,7 @@ const AdminDashboard = () => {
                               }
                             }
                           }}
-                          style={{
-                            flex: 1,
-                            padding: '8px',
-                            backgroundColor: '#dc3545',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            fontWeight: 'bold',
-                          }}
+                          className="admin-product-action-btn admin-product-action-btn-delete"
                         >
                           Delete
                         </button>

@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../store/slices/cartSlice';
 import { API_BASE_URL } from '../config/api';
+import './ProductScreen.css';
 
 const ProductScreen = () => {
   const { id } = useParams();
@@ -34,14 +35,14 @@ const ProductScreen = () => {
   }, [id]);
 
   if (loading) {
-    return <div style={{ padding: '20px' }}>Loading...</div>;
+    return <div className="loading-container">Loading...</div>;
   }
 
   if (error) {
     return (
-      <div style={{ padding: '20px' }}>
+      <div className="error-container">
         <div>Error: {error}</div>
-        <Link to="/" style={{ marginTop: '10px', display: 'inline-block' }}>
+        <Link to="/" className="error-link">
           Go back to home
         </Link>
       </div>
@@ -50,9 +51,9 @@ const ProductScreen = () => {
 
   if (!product) {
     return (
-      <div style={{ padding: '20px' }}>
+      <div className="error-container">
         <div>Product not found</div>
-        <Link to="/" style={{ marginTop: '10px', display: 'inline-block' }}>
+        <Link to="/" className="error-link">
           Go back to home
         </Link>
       </div>
@@ -60,31 +61,18 @@ const ProductScreen = () => {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <Link to="/" style={{ marginBottom: '20px', display: 'inline-block', textDecoration: 'none', color: '#2c5530' }}>
+    <div className="product-container">
+      <Link to="/" className="product-back-link">
         ← Back to Products
       </Link>
       
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '40px',
-          marginTop: '20px',
-        }}
-      >
+      <div className="product-details-grid">
         {/* Product Image */}
         <div>
           <img
             src={product.image}
             alt={product.name}
-            style={{
-              width: '100%',
-              height: '500px',
-              objectFit: 'cover',
-              borderRadius: '8px',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-            }}
+            className="product-image-large"
             onError={(e) => {
               e.target.src = 'https://via.placeholder.com/500?text=No+Image';
             }}
@@ -93,86 +81,87 @@ const ProductScreen = () => {
 
         {/* Product Details */}
         <div>
-          <h1 style={{ fontSize: '32px', marginBottom: '10px', color: '#333' }}>
+          <h1 className="product-title">
             {product.name}
           </h1>
           
           {product.reviews && product.reviews.length > 0 && (
-            <div style={{ marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div className="product-rating-section">
               <div>
                 {[...Array(5)].map((_, i) => {
                   const avgRating = product.reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / product.reviews.length;
                   return (
-                    <span key={i} style={{ color: i < Math.round(avgRating) ? '#ffc107' : '#ddd', fontSize: '20px' }}>
+                    <span key={i} className={`product-star-large ${i < Math.round(avgRating) ? 'product-star-filled' : 'product-star-empty'}`}>
                       ★
                     </span>
                   );
                 })}
               </div>
-              <span style={{ fontSize: '16px', color: '#666' }}>
+              <span className="product-rating-text">
                 {product.reviews.length} {product.reviews.length === 1 ? 'review' : 'reviews'}
               </span>
             </div>
           )}
           
-          <p
-            style={{
-              fontSize: '14px',
-              color: '#666',
-              marginBottom: '20px',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-            }}
-          >
+          <p className="product-category">
             {product.category}
           </p>
 
-          <div
-            style={{
-              fontSize: '36px',
-              fontWeight: 'bold',
-              color: '#2c5530',
-              marginBottom: '20px',
-            }}
-          >
-            ${product.price}
+          <div className="product-price-large">
+            ₹{product.priceInINR || (product.price * 83).toFixed(0)}
+          </div>
+          <div className="product-weight">
+            Weight: {product.weight || 'N/A'}
           </div>
 
-          <div
-            style={{
-              padding: '15px',
-              backgroundColor: product.stockCount > 0 ? '#d4edda' : '#f8d7da',
-              color: product.stockCount > 0 ? '#155724' : '#721c24',
-              borderRadius: '4px',
-              marginBottom: '30px',
-              fontWeight: 'bold',
-            }}
-          >
+          <div className={`product-stock-badge ${product.stockCount > 0 ? 'product-stock-in' : 'product-stock-out'}`}>
             {product.stockCount > 0
               ? `In Stock (${product.stockCount} available)`
               : 'Out of Stock'}
           </div>
 
-          <div style={{ marginBottom: '30px' }}>
-            <h2 style={{ fontSize: '20px', marginBottom: '10px' }}>Description</h2>
-            <p style={{ lineHeight: '1.6', color: '#555' }}>{product.description}</p>
+          <div className="product-description-section">
+            <h2 className="product-description-title">Description</h2>
+            <p className="product-description-text">{product.description}</p>
           </div>
 
+          {product.ingredients && (
+            <div className="product-info-section">
+              <h2 className="product-info-title">Ingredients</h2>
+              <p className="product-info-text">{product.ingredients}</p>
+            </div>
+          )}
+
+          {product.nutritionalFacts && (
+            <div className="product-info-section">
+              <h2 className="product-info-title">Nutritional Facts</h2>
+              <p className="product-info-text" style={{ whiteSpace: 'pre-line' }}>{product.nutritionalFacts}</p>
+            </div>
+          )}
+
+          {product.storage && (
+            <div className="product-info-section">
+              <h2 className="product-info-title">Storage Instructions</h2>
+              <p className="product-info-text">{product.storage}</p>
+            </div>
+          )}
+
+          {product.healthBenefits && (
+            <div className="product-info-section">
+              <h2 className="product-info-title">Health Benefits</h2>
+              <p className="product-info-text">{product.healthBenefits}</p>
+            </div>
+          )}
+
           {product.stockCount > 0 && (
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold' }}>
+            <div className="product-quantity-section">
+              <label className="product-quantity-label">
                 Quantity:
               </label>
               <select
                 value={qty}
                 onChange={(e) => setQty(Number(e.target.value))}
-                style={{
-                  padding: '10px',
-                  fontSize: '16px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  width: '100px',
-                }}
+                className="product-quantity-select"
               >
                 {[...Array(Math.min(product.stockCount, 10)).keys()].map((x) => (
                   <option key={x + 1} value={x + 1}>
@@ -191,23 +180,15 @@ const ProductScreen = () => {
                   name: product.name,
                   image: product.image,
                   price: product.price,
+                  priceInINR: product.priceInINR || (product.price * 83),
+                  weight: product.weight,
                   stockCount: product.stockCount,
                   qty: qty,
                 })
               );
               navigate('/cart');
             }}
-            style={{
-              padding: '15px 30px',
-              fontSize: '18px',
-              backgroundColor: product.stockCount > 0 ? '#2c5530' : '#ccc',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: product.stockCount > 0 ? 'pointer' : 'not-allowed',
-              fontWeight: 'bold',
-              width: '100%',
-            }}
+            className="product-add-to-cart-btn"
             disabled={product.stockCount === 0}
           >
             {product.stockCount > 0 ? 'Add to Cart' : 'Out of Stock'}
@@ -216,27 +197,18 @@ const ProductScreen = () => {
       </div>
 
       {/* Reviews Section */}
-      <div style={{ marginTop: '40px', borderTop: '1px solid #ddd', paddingTop: '30px' }}>
-        <h2 style={{ marginBottom: '20px' }}>Reviews</h2>
+      <div className="product-reviews-section">
+        <h2 className="product-reviews-title">Reviews</h2>
         {product.reviews && product.reviews.length > 0 ? (
           <div>
             {product.reviews.map((review) => (
-              <div
-                key={review._id}
-                style={{
-                  border: '1px solid #ddd',
-                  borderRadius: '8px',
-                  padding: '15px',
-                  marginBottom: '15px',
-                  position: 'relative',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+              <div key={review._id} className="review-card">
+                <div className="review-header">
                   <strong>{review.name}</strong>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div className="review-stars">
                     <div>
                       {[...Array(5)].map((_, i) => (
-                        <span key={i} style={{ color: i < review.rating ? '#ffc107' : '#ddd' }}>
+                        <span key={i} className={i < review.rating ? 'product-star-filled' : 'product-star-empty'}>
                           ★
                         </span>
                       ))}
@@ -265,23 +237,15 @@ const ProductScreen = () => {
                             }
                           }
                         }}
-                        style={{
-                          padding: '5px 10px',
-                          backgroundColor: '#dc3545',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          fontSize: '12px',
-                        }}
+                        className="review-delete-btn"
                       >
                         Delete
                       </button>
                     )}
                   </div>
                 </div>
-                <p style={{ color: '#555', marginBottom: '5px' }}>{review.comment}</p>
-                <small style={{ color: '#888' }}>
+                <p className="review-comment">{review.comment}</p>
+                <small className="review-date">
                   {new Date(review.createdAt).toLocaleDateString()}
                 </small>
               </div>
@@ -293,8 +257,8 @@ const ProductScreen = () => {
 
         {/* Add Review Form */}
         {userInfo && (
-          <div style={{ marginTop: '30px', borderTop: '1px solid #ddd', paddingTop: '20px' }}>
-            <h3 style={{ marginBottom: '15px' }}>Write a Review</h3>
+          <div className="review-form-section">
+            <h3 className="review-form-title">Write a Review</h3>
             <ReviewForm productId={product._id} userInfo={userInfo} />
           </div>
         )}
@@ -349,29 +313,16 @@ const ReviewForm = ({ productId, userInfo }) => {
   return (
     <form onSubmit={submitHandler}>
       {error && (
-        <div
-          style={{
-            padding: '10px',
-            backgroundColor: '#f8d7da',
-            color: '#721c24',
-            borderRadius: '4px',
-            marginBottom: '15px',
-          }}
-        >
+        <div className="review-form-error">
           {error}
         </div>
       )}
-      <div style={{ marginBottom: '15px' }}>
-        <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Rating</label>
+      <div className="review-form-field">
+        <label className="review-form-label">Rating</label>
         <select
           value={rating}
           onChange={(e) => setRating(Number(e.target.value))}
-          style={{
-            padding: '10px',
-            fontSize: '16px',
-            border: '1px solid #ddd',
-            borderRadius: '4px',
-          }}
+          className="review-form-select"
         >
           <option value={5}>5 - Excellent</option>
           <option value={4}>4 - Very Good</option>
@@ -380,35 +331,20 @@ const ReviewForm = ({ productId, userInfo }) => {
           <option value={1}>1 - Poor</option>
         </select>
       </div>
-      <div style={{ marginBottom: '15px' }}>
-        <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Comment</label>
+      <div className="review-form-field">
+        <label className="review-form-label">Comment</label>
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           required
           rows={4}
-          style={{
-            width: '100%',
-            padding: '10px',
-            fontSize: '16px',
-            border: '1px solid #ddd',
-            borderRadius: '4px',
-          }}
+          className="review-form-textarea"
         />
       </div>
       <button
         type="submit"
         disabled={submitting}
-        style={{
-          padding: '10px 20px',
-          backgroundColor: '#2c5530',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          fontSize: '16px',
-          cursor: submitting ? 'not-allowed' : 'pointer',
-          fontWeight: 'bold',
-        }}
+        className="review-form-submit-btn"
       >
         {submitting ? 'Submitting...' : 'Submit Review'}
       </button>

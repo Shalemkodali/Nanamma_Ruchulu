@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearCart } from '../store/slices/cartSlice';
 import { API_BASE_URL } from '../config/api';
+import './CheckoutScreen.css';
 
 const CheckoutScreen = () => {
   const navigate = useNavigate();
@@ -17,7 +18,10 @@ const CheckoutScreen = () => {
   });
   const [loading, setLoading] = useState(false);
 
-  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.qty, 0).toFixed(2);
+  const subtotal = cartItems.reduce((acc, item) => {
+    const priceInINR = item.priceInINR || (item.price * 83);
+    return acc + priceInINR * item.qty;
+  }, 0).toFixed(0);
 
   useEffect(() => {
     if (!userInfo) {
@@ -112,16 +116,16 @@ const CheckoutScreen = () => {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      <h1 style={{ marginBottom: '30px' }}>Checkout</h1>
+    <div className="checkout-container">
+      <h1 className="checkout-title">Checkout</h1>
 
       <form onSubmit={placeOrderHandler}>
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>
+        <div className="checkout-grid">
           {/* Shipping Form */}
           <div>
-            <h2 style={{ marginBottom: '20px' }}>Shipping Address</h2>
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+            <h2 className="checkout-section-title">Shipping Address</h2>
+          <div className="checkout-form-field">
+            <label className="checkout-label">
               Address
             </label>
             <input
@@ -129,17 +133,11 @@ const CheckoutScreen = () => {
               required
               value={shippingAddress.address}
               onChange={(e) => setShippingAddress({ ...shippingAddress, address: e.target.value })}
-              style={{
-                width: '100%',
-                padding: '10px',
-                fontSize: '16px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-              }}
+              className="checkout-input"
             />
           </div>
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+          <div className="checkout-form-field">
+            <label className="checkout-label">
               City
             </label>
             <input
@@ -147,17 +145,11 @@ const CheckoutScreen = () => {
               required
               value={shippingAddress.city}
               onChange={(e) => setShippingAddress({ ...shippingAddress, city: e.target.value })}
-              style={{
-                width: '100%',
-                padding: '10px',
-                fontSize: '16px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-              }}
+              className="checkout-input"
             />
           </div>
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+          <div className="checkout-form-field">
+            <label className="checkout-label">
               Postal Code
             </label>
             <input
@@ -167,17 +159,11 @@ const CheckoutScreen = () => {
               onChange={(e) =>
                 setShippingAddress({ ...shippingAddress, postalCode: e.target.value })
               }
-              style={{
-                width: '100%',
-                padding: '10px',
-                fontSize: '16px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-              }}
+              className="checkout-input"
             />
           </div>
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+          <div className="checkout-form-field">
+            <label className="checkout-label">
               Country
             </label>
             <input
@@ -187,60 +173,31 @@ const CheckoutScreen = () => {
               onChange={(e) =>
                 setShippingAddress({ ...shippingAddress, country: e.target.value })
               }
-              style={{
-                width: '100%',
-                padding: '10px',
-                fontSize: '16px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-              }}
+              className="checkout-input"
             />
           </div>
           </div>
 
           {/* Order Summary */}
           <div>
-            <h2 style={{ marginBottom: '20px' }}>Order Summary</h2>
-            <div
-              style={{
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                padding: '20px',
-                backgroundColor: '#f9f9f9',
-              }}
-            >
-              <div style={{ marginBottom: '15px' }}>
+            <h2 className="checkout-section-title">Order Summary</h2>
+            <div className="checkout-summary">
+              <div className="checkout-summary-items">
                 {cartItems.map((item) => (
-                  <div key={item.product} style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between' }}>
+                  <div key={item.product} className="checkout-summary-item">
                     <span>{item.name} x {item.qty}</span>
                     <span>${(item.price * item.qty).toFixed(2)}</span>
                   </div>
                 ))}
               </div>
-              <div
-                style={{
-                  borderTop: '2px solid #ddd',
-                  paddingTop: '15px',
-                  marginTop: '15px',
-                  fontSize: '20px',
-                  fontWeight: 'bold',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                }}
-              >
+              <div className="checkout-summary-total">
                 <span>Total:</span>
-                <span>${subtotal}</span>
+                <span>₹{subtotal}</span>
               </div>
             </div>
             
-            <div style={{ 
-              marginTop: '20px', 
-              padding: '15px', 
-              backgroundColor: '#fff3cd', 
-              borderRadius: '4px',
-              border: '1px solid #ffc107',
-            }}>
-              <p style={{ margin: 0, fontSize: '14px', color: '#856404' }}>
+            <div className="checkout-note">
+              <p className="checkout-note-text">
                 <strong>Note:</strong> Payment processing is currently disabled. Your order will be placed without payment.
               </p>
             </div>
@@ -250,18 +207,7 @@ const CheckoutScreen = () => {
         <button
           type="submit"
           disabled={loading}
-          style={{
-            width: '100%',
-            padding: '12px',
-            backgroundColor: loading ? '#ccc' : '#2c5530',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            marginTop: '30px',
-          }}
+          className="checkout-submit-btn"
         >
           {loading ? 'Placing Order...' : 'Place Order'}
         </button>

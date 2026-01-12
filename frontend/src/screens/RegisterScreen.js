@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { register, clearError } from '../store/slices/userSlice';
+import './RegisterScreen.css';
 
 const RegisterScreen = () => {
   const [name, setName] = useState('');
@@ -38,37 +39,21 @@ const RegisterScreen = () => {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '400px', margin: '50px auto' }}>
-      <h1 style={{ marginBottom: '30px', textAlign: 'center' }}>Register</h1>
+    <div className="register-container">
+      <h1 className="register-title">Register</h1>
       {message && (
-        <div
-          style={{
-            padding: '10px',
-            backgroundColor: '#f8d7da',
-            color: '#721c24',
-            borderRadius: '4px',
-            marginBottom: '20px',
-          }}
-        >
+        <div className="register-message">
           {message}
         </div>
       )}
       {error && (
-        <div
-          style={{
-            padding: '10px',
-            backgroundColor: '#f8d7da',
-            color: '#721c24',
-            borderRadius: '4px',
-            marginBottom: '20px',
-          }}
-        >
+        <div className="register-error">
           {error}
         </div>
       )}
       <form onSubmit={submitHandler}>
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+        <div className="register-form-field">
+          <label className="register-label">
             Name
           </label>
           <input
@@ -76,17 +61,11 @@ const RegisterScreen = () => {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            style={{
-              width: '100%',
-              padding: '10px',
-              fontSize: '16px',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-            }}
+            className="register-input"
           />
         </div>
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+        <div className="register-form-field">
+          <label className="register-label">
             Email Address
           </label>
           <input
@@ -94,17 +73,11 @@ const RegisterScreen = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{
-              width: '100%',
-              padding: '10px',
-              fontSize: '16px',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-            }}
+            className="register-input"
           />
         </div>
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+        <div className="register-form-field">
+          <label className="register-label">
             Password
           </label>
           <input
@@ -112,17 +85,11 @@ const RegisterScreen = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{
-              width: '100%',
-              padding: '10px',
-              fontSize: '16px',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-            }}
+            className="register-input"
           />
         </div>
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+        <div className="register-form-field">
+          <label className="register-label">
             Confirm Password
           </label>
           <input
@@ -130,35 +97,18 @@ const RegisterScreen = () => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            style={{
-              width: '100%',
-              padding: '10px',
-              fontSize: '16px',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-            }}
+            className="register-input"
           />
         </div>
         <button
           type="submit"
           disabled={loading}
-          style={{
-            width: '100%',
-            padding: '12px',
-            backgroundColor: '#2c5530',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            marginBottom: '20px',
-          }}
+          className="register-submit-btn"
         >
           {loading ? 'Registering...' : 'Register'}
         </button>
       </form>
-      <div style={{ textAlign: 'center' }}>
+      <div className="register-footer">
         <p>
           Have an Account? <Link to="/login">Sign In</Link>
         </p>

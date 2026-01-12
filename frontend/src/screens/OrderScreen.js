@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { API_BASE_URL } from '../config/api';
+import './OrderScreen.css';
 
 const OrderScreen = () => {
   const { id } = useParams();
@@ -36,14 +37,14 @@ const OrderScreen = () => {
   }, [id, userInfo]);
 
   if (loading) {
-    return <div style={{ padding: '20px' }}>Loading...</div>;
+    return <div className="loading-container">Loading...</div>;
   }
 
   if (error) {
     return (
-      <div style={{ padding: '20px' }}>
+      <div className="error-container">
         <div>Error: {error}</div>
-        <Link to="/profile" style={{ marginTop: '10px', display: 'inline-block' }}>
+        <Link to="/profile" className="error-link">
           Go to Profile
         </Link>
       </div>
@@ -52,9 +53,9 @@ const OrderScreen = () => {
 
   if (!order) {
     return (
-      <div style={{ padding: '20px' }}>
+      <div className="error-container">
         <div>Order not found</div>
-        <Link to="/profile" style={{ marginTop: '10px', display: 'inline-block' }}>
+        <Link to="/profile" className="error-link">
           Go to Profile
         </Link>
       </div>
@@ -62,62 +63,46 @@ const OrderScreen = () => {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
-      <h1 style={{ marginBottom: '30px' }}>Order Details</h1>
-      <Link to="/profile" style={{ marginBottom: '20px', display: 'inline-block', textDecoration: 'none', color: '#2c5530' }}>
+    <div className="order-container">
+      <h1 className="order-title">Order Details</h1>
+      <Link to="/profile" className="order-back-link">
         ← Back to Profile
       </Link>
 
-      <div style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '20px', marginBottom: '20px' }}>
-        <h2 style={{ marginBottom: '15px' }}>Order Information</h2>
-        <div style={{ marginBottom: '10px' }}>
+      <div className="order-section">
+        <h2 className="order-section-title">Order Information</h2>
+        <div className="order-info-item">
           <strong>Order ID:</strong> {order._id}
         </div>
-        <div style={{ marginBottom: '10px' }}>
+        <div className="order-info-item">
           <strong>Order Date:</strong> {new Date(order.createdAt).toLocaleString()}
         </div>
-        <div style={{ marginBottom: '10px' }}>
+        <div className="order-info-item">
           <strong>Payment Status:</strong>{' '}
-          <span
-            style={{
-              padding: '5px 10px',
-              borderRadius: '4px',
-              backgroundColor: order.isPaid ? '#d4edda' : '#fff3cd',
-              color: order.isPaid ? '#155724' : '#856404',
-              fontWeight: 'bold',
-            }}
-          >
+          <span className={`order-status-badge ${order.isPaid ? 'order-status-paid' : 'order-status-unpaid'}`}>
             {order.isPaid ? 'Paid' : 'Payment Not Required'}
           </span>
           {order.isPaid && order.paidAt && (
-            <span style={{ marginLeft: '10px', color: '#666' }}>
+            <span className="order-status-date">
               Paid on {new Date(order.paidAt).toLocaleDateString()}
             </span>
           )}
         </div>
-        <div style={{ marginBottom: '10px' }}>
+        <div className="order-info-item">
           <strong>Delivery Status:</strong>{' '}
-          <span
-            style={{
-              padding: '5px 10px',
-              borderRadius: '4px',
-              backgroundColor: order.isDelivered ? '#d4edda' : '#fff3cd',
-              color: order.isDelivered ? '#155724' : '#856404',
-              fontWeight: 'bold',
-            }}
-          >
+          <span className={`order-status-badge ${order.isDelivered ? 'order-status-delivered' : 'order-status-not-delivered'}`}>
             {order.isDelivered ? 'Delivered' : 'Not Delivered'}
           </span>
           {order.isDelivered && order.deliveredAt && (
-            <span style={{ marginLeft: '10px', color: '#666' }}>
+            <span className="order-status-date">
               Delivered on {new Date(order.deliveredAt).toLocaleDateString()}
             </span>
           )}
         </div>
       </div>
 
-      <div style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '20px', marginBottom: '20px' }}>
-        <h2 style={{ marginBottom: '15px' }}>Shipping Address</h2>
+      <div className="order-section">
+        <h2 className="order-section-title">Shipping Address</h2>
         <div>
           {order.shippingAddress.address}
           <br />
@@ -127,45 +112,30 @@ const OrderScreen = () => {
         </div>
       </div>
 
-      <div style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '20px', marginBottom: '20px' }}>
-        <h2 style={{ marginBottom: '15px' }}>Order Items</h2>
+      <div className="order-section">
+        <h2 className="order-section-title">Order Items</h2>
         {order.orderItems.map((item) => (
-          <div
-            key={item.product}
-            style={{
-              display: 'flex',
-              gap: '20px',
-              padding: '15px',
-              borderBottom: '1px solid #eee',
-              marginBottom: '10px',
-            }}
-          >
+          <div key={item.product} className="order-item">
             <img
               src={item.image}
               alt={item.name}
-              style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '4px' }}
+              className="order-item-image"
             />
-            <div style={{ flex: 1 }}>
-              <Link to={`/product/${item.product}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                <h3 style={{ marginBottom: '5px' }}>{item.name}</h3>
+            <div className="order-item-details">
+              <Link to={`/product/${item.product}`} className="order-item-link">
+                <h3 className="order-item-name">{item.name} {item.weight && `(${item.weight})`}</h3>
               </Link>
               <p>
-                {item.qty || item.quantity} x ${item.price} = ${((item.qty || item.quantity) * item.price).toFixed(2)}
+                {item.qty || item.quantity} x ₹{item.priceInINR || (item.price * 83).toFixed(0)} = ₹{((item.qty || item.quantity) * (item.priceInINR || (item.price * 83))).toFixed(0)}
               </p>
             </div>
           </div>
         ))}
-        <div
-          style={{
-            borderTop: '2px solid #ddd',
-            paddingTop: '15px',
-            marginTop: '15px',
-            fontSize: '20px',
-            fontWeight: 'bold',
-            textAlign: 'right',
-          }}
-        >
-          Total: ${order.totalPrice}
+        <div className="order-total">
+          Total: ₹{order.orderItems.reduce((sum, item) => {
+            const priceInINR = item.priceInINR || (item.price * 83);
+            return sum + (priceInINR * (item.qty || item.quantity));
+          }, 0).toFixed(0)}
         </div>
       </div>
     </div>

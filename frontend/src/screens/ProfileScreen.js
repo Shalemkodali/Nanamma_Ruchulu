@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { updateProfile, clearError } from '../store/slices/userSlice';
 import { API_BASE_URL } from '../config/api';
+import './ProfileScreen.css';
 
 const ProfileScreen = () => {
   const dispatch = useDispatch();
@@ -61,76 +62,48 @@ const ProfileScreen = () => {
   if (!userInfo) return null;
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1 style={{ marginBottom: '30px' }}>User Profile</h1>
+    <div className="profile-container">
+      <h1 className="profile-title">User Profile</h1>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+      <div className="profile-grid">
         {/* Profile Update Form */}
         <div>
-          <h2 style={{ marginBottom: '20px' }}>Update Profile</h2>
+          <h2 className="profile-section-title">Update Profile</h2>
           {message && (
-            <div
-              style={{
-                padding: '10px',
-                backgroundColor: '#f8d7da',
-                color: '#721c24',
-                borderRadius: '4px',
-                marginBottom: '20px',
-              }}
-            >
+            <div className="profile-message">
               {message}
             </div>
           )}
           {error && (
-            <div
-              style={{
-                padding: '10px',
-                backgroundColor: '#f8d7da',
-                color: '#721c24',
-                borderRadius: '4px',
-                marginBottom: '20px',
-              }}
-            >
+            <div className="profile-error">
               {error}
             </div>
           )}
           <form onSubmit={submitHandler}>
-            <div style={{ marginBottom: '15px' }}>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+            <div className="profile-form-field">
+              <label className="profile-label">
                 Name
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  fontSize: '16px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                }}
+                className="profile-input"
               />
             </div>
-            <div style={{ marginBottom: '15px' }}>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+            <div className="profile-form-field">
+              <label className="profile-label">
                 Email
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  fontSize: '16px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                }}
+                className="profile-input"
               />
             </div>
-            <div style={{ marginBottom: '15px' }}>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+            <div className="profile-form-field">
+              <label className="profile-label">
                 Password
               </label>
               <input
@@ -138,46 +111,24 @@ const ProfileScreen = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Leave blank to keep current password"
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  fontSize: '16px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                }}
+                className="profile-input"
               />
             </div>
-            <div style={{ marginBottom: '15px' }}>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+            <div className="profile-form-field">
+              <label className="profile-label">
                 Confirm Password
               </label>
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  fontSize: '16px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                }}
+                className="profile-input"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              style={{
-                width: '100%',
-                padding: '12px',
-                backgroundColor: '#2c5530',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                cursor: loading ? 'not-allowed' : 'pointer',
-              }}
+              className="profile-submit-btn"
             >
               {loading ? 'Updating...' : 'Update Profile'}
             </button>
@@ -186,31 +137,23 @@ const ProfileScreen = () => {
 
         {/* Order History */}
         <div>
-          <h2 style={{ marginBottom: '20px' }}>Order History</h2>
+          <h2 className="profile-section-title">Order History</h2>
           {orders.length === 0 ? (
             <p>No orders yet</p>
           ) : (
             <div>
               {orders.map((order) => (
-                <div
-                  key={order._id}
-                  style={{
-                    border: '1px solid #ddd',
-                    borderRadius: '8px',
-                    padding: '15px',
-                    marginBottom: '15px',
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                <div key={order._id} className="profile-order-card">
+                  <div className="profile-order-header">
                     <Link
                       to={`/order/${order._id}`}
-                      style={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}
+                      className="profile-order-link"
                     >
                       Order #{order._id.slice(-6)}
                     </Link>
                     <span>{new Date(order.createdAt).toLocaleDateString()}</span>
                   </div>
-                  <div style={{ marginBottom: '10px' }}>
+                  <div className="profile-order-total">
                     <strong>Total: ${order.totalPrice}</strong>
                   </div>
                   <div>
